@@ -1,4 +1,4 @@
-package pkg
+package jclab_license
 
 import (
 	"crypto/ed25519"
