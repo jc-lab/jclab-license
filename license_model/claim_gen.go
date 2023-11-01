@@ -42,25 +42,35 @@ func (z *Claims) DecodeMsg(dc *msgp.Reader) (err error) {
 				err = msgp.WrapError(err, "Product")
 				return
 			}
-		case "license_key_hash":
+		case "lictype":
+			{
+				var zb0002 string
+				zb0002, err = dc.ReadString()
+				if err != nil {
+					err = msgp.WrapError(err, "LicenseType")
+					return
+				}
+				z.LicenseType = LicenseType(zb0002)
+			}
+		case "lickeyh":
 			z.LicenseKeyHash, err = dc.ReadString()
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseKeyHash")
 				return
 			}
-		case "license_max_version":
+		case "licmaxv":
 			z.LicenseMaxVersion, err = dc.ReadInt()
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseMaxVersion")
 				return
 			}
-		case "licensee_name":
+		case "lisname":
 			z.LicenseeName, err = dc.ReadString()
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseeName")
 				return
 			}
-		case "licensee_email":
+		case "lisemail":
 			z.LicenseeEmail, err = dc.ReadString()
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseeEmail")
@@ -79,9 +89,9 @@ func (z *Claims) DecodeMsg(dc *msgp.Reader) (err error) {
 
 // EncodeMsg implements msgp.Encodable
 func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
-	// map header, size 7
+	// map header, size 8
 	// write "iat"
-	err = en.Append(0x87, 0xa3, 0x69, 0x61, 0x74)
+	err = en.Append(0x88, 0xa3, 0x69, 0x61, 0x74)
 	if err != nil {
 		return
 	}
@@ -110,8 +120,18 @@ func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
 		err = msgp.WrapError(err, "Product")
 		return
 	}
-	// write "license_key_hash"
-	err = en.Append(0xb0, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x5f, 0x6b, 0x65, 0x79, 0x5f, 0x68, 0x61, 0x73, 0x68)
+	// write "lictype"
+	err = en.Append(0xa7, 0x6c, 0x69, 0x63, 0x74, 0x79, 0x70, 0x65)
+	if err != nil {
+		return
+	}
+	err = en.WriteString(string(z.LicenseType))
+	if err != nil {
+		err = msgp.WrapError(err, "LicenseType")
+		return
+	}
+	// write "lickeyh"
+	err = en.Append(0xa7, 0x6c, 0x69, 0x63, 0x6b, 0x65, 0x79, 0x68)
 	if err != nil {
 		return
 	}
@@ -120,8 +140,8 @@ func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
 		err = msgp.WrapError(err, "LicenseKeyHash")
 		return
 	}
-	// write "license_max_version"
-	err = en.Append(0xb3, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x5f, 0x6d, 0x61, 0x78, 0x5f, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e)
+	// write "licmaxv"
+	err = en.Append(0xa7, 0x6c, 0x69, 0x63, 0x6d, 0x61, 0x78, 0x76)
 	if err != nil {
 		return
 	}
@@ -130,8 +150,8 @@ func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
 		err = msgp.WrapError(err, "LicenseMaxVersion")
 		return
 	}
-	// write "licensee_name"
-	err = en.Append(0xad, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65)
+	// write "lisname"
+	err = en.Append(0xa7, 0x6c, 0x69, 0x73, 0x6e, 0x61, 0x6d, 0x65)
 	if err != nil {
 		return
 	}
@@ -140,8 +160,8 @@ func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
 		err = msgp.WrapError(err, "LicenseeName")
 		return
 	}
-	// write "licensee_email"
-	err = en.Append(0xae, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x65, 0x5f, 0x65, 0x6d, 0x61, 0x69, 0x6c)
+	// write "lisemail"
+	err = en.Append(0xa8, 0x6c, 0x69, 0x73, 0x65, 0x6d, 0x61, 0x69, 0x6c)
 	if err != nil {
 		return
 	}
@@ -156,9 +176,9 @@ func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
 // MarshalMsg implements msgp.Marshaler
 func (z *Claims) MarshalMsg(b []byte) (o []byte, err error) {
 	o = msgp.Require(b, z.Msgsize())
-	// map header, size 7
+	// map header, size 8
 	// string "iat"
-	o = append(o, 0x87, 0xa3, 0x69, 0x61, 0x74)
+	o = append(o, 0x88, 0xa3, 0x69, 0x61, 0x74)
 	o = msgp.AppendInt64(o, z.Iat)
 	// string "iss"
 	o = append(o, 0xa3, 0x69, 0x73, 0x73)
@@ -166,17 +186,20 @@ func (z *Claims) MarshalMsg(b []byte) (o []byte, err error) {
 	// string "product"
 	o = append(o, 0xa7, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74)
 	o = msgp.AppendString(o, z.Product)
-	// string "license_key_hash"
-	o = append(o, 0xb0, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x5f, 0x6b, 0x65, 0x79, 0x5f, 0x68, 0x61, 0x73, 0x68)
+	// string "lictype"
+	o = append(o, 0xa7, 0x6c, 0x69, 0x63, 0x74, 0x79, 0x70, 0x65)
+	o = msgp.AppendString(o, string(z.LicenseType))
+	// string "lickeyh"
+	o = append(o, 0xa7, 0x6c, 0x69, 0x63, 0x6b, 0x65, 0x79, 0x68)
 	o = msgp.AppendString(o, z.LicenseKeyHash)
-	// string "license_max_version"
-	o = append(o, 0xb3, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x5f, 0x6d, 0x61, 0x78, 0x5f, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e)
+	// string "licmaxv"
+	o = append(o, 0xa7, 0x6c, 0x69, 0x63, 0x6d, 0x61, 0x78, 0x76)
 	o = msgp.AppendInt(o, z.LicenseMaxVersion)
-	// string "licensee_name"
-	o = append(o, 0xad, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65)
+	// string "lisname"
+	o = append(o, 0xa7, 0x6c, 0x69, 0x73, 0x6e, 0x61, 0x6d, 0x65)
 	o = msgp.AppendString(o, z.LicenseeName)
-	// string "licensee_email"
-	o = append(o, 0xae, 0x6c, 0x69, 0x63, 0x65, 0x6e, 0x73, 0x65, 0x65, 0x5f, 0x65, 0x6d, 0x61, 0x69, 0x6c)
+	// string "lisemail"
+	o = append(o, 0xa8, 0x6c, 0x69, 0x73, 0x65, 0x6d, 0x61, 0x69, 0x6c)
 	o = msgp.AppendString(o, z.LicenseeEmail)
 	return
 }
@@ -217,25 +240,35 @@ func (z *Claims) UnmarshalMsg(bts []byte) (o []byte, err error) {
 				err = msgp.WrapError(err, "Product")
 				return
 			}
-		case "license_key_hash":
+		case "lictype":
+			{
+				var zb0002 string
+				zb0002, bts, err = msgp.ReadStringBytes(bts)
+				if err != nil {
+					err = msgp.WrapError(err, "LicenseType")
+					return
+				}
+				z.LicenseType = LicenseType(zb0002)
+			}
+		case "lickeyh":
 			z.LicenseKeyHash, bts, err = msgp.ReadStringBytes(bts)
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseKeyHash")
 				return
 			}
-		case "license_max_version":
+		case "licmaxv":
 			z.LicenseMaxVersion, bts, err = msgp.ReadIntBytes(bts)
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseMaxVersion")
 				return
 			}
-		case "licensee_name":
+		case "lisname":
 			z.LicenseeName, bts, err = msgp.ReadStringBytes(bts)
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseeName")
 				return
 			}
-		case "licensee_email":
+		case "lisemail":
 			z.LicenseeEmail, bts, err = msgp.ReadStringBytes(bts)
 			if err != nil {
 				err = msgp.WrapError(err, "LicenseeEmail")
@@ -255,6 +288,58 @@ func (z *Claims) UnmarshalMsg(bts []byte) (o []byte, err error) {
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *Claims) Msgsize() (s int) {
-	s = 1 + 4 + msgp.Int64Size + 4 + msgp.StringPrefixSize + len(z.Iss) + 8 + msgp.StringPrefixSize + len(z.Product) + 17 + msgp.StringPrefixSize + len(z.LicenseKeyHash) + 20 + msgp.IntSize + 14 + msgp.StringPrefixSize + len(z.LicenseeName) + 15 + msgp.StringPrefixSize + len(z.LicenseeEmail)
+	s = 1 + 4 + msgp.Int64Size + 4 + msgp.StringPrefixSize + len(z.Iss) + 8 + msgp.StringPrefixSize + len(z.Product) + 8 + msgp.StringPrefixSize + len(string(z.LicenseType)) + 8 + msgp.StringPrefixSize + len(z.LicenseKeyHash) + 8 + msgp.IntSize + 8 + msgp.StringPrefixSize + len(z.LicenseeName) + 9 + msgp.StringPrefixSize + len(z.LicenseeEmail)
+	return
+}
+
+// DecodeMsg implements msgp.Decodable
+func (z *LicenseType) DecodeMsg(dc *msgp.Reader) (err error) {
+	{
+		var zb0001 string
+		zb0001, err = dc.ReadString()
+		if err != nil {
+			err = msgp.WrapError(err)
+			return
+		}
+		(*z) = LicenseType(zb0001)
+	}
+	return
+}
+
+// EncodeMsg implements msgp.Encodable
+func (z LicenseType) EncodeMsg(en *msgp.Writer) (err error) {
+	err = en.WriteString(string(z))
+	if err != nil {
+		err = msgp.WrapError(err)
+		return
+	}
+	return
+}
+
+// MarshalMsg implements msgp.Marshaler
+func (z LicenseType) MarshalMsg(b []byte) (o []byte, err error) {
+	o = msgp.Require(b, z.Msgsize())
+	o = msgp.AppendString(o, string(z))
+	return
+}
+
+// UnmarshalMsg implements msgp.Unmarshaler
+func (z *LicenseType) UnmarshalMsg(bts []byte) (o []byte, err error) {
+	{
+		var zb0001 string
+		zb0001, bts, err = msgp.ReadStringBytes(bts)
+		if err != nil {
+			err = msgp.WrapError(err)
+			return
+		}
+		(*z) = LicenseType(zb0001)
+	}
+	o = bts
+	return
+}
+
+// Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
+func (z LicenseType) Msgsize() (s int) {
+	s = msgp.StringPrefixSize + len(string(z))
 	return
 }

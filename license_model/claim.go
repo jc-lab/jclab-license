@@ -2,12 +2,20 @@ package license_model
 
 //go:generate msgp
 
+type LicenseType string
+
+const (
+	LicenseTypeOpenSource LicenseType = "opensource"
+	LicenseTypeCommercial LicenseType = "commercial"
+)
+
 type Claims struct {
-	Iat               int64  `json:"iat" msg:"iat"`
-	Iss               string `json:"iss" msg:"iss"`
-	Product           string `json:"product" msg:"product"`
-	LicenseKeyHash    string `json:"license_key_hash" msg:"license_key_hash"`
-	LicenseMaxVersion int    `json:"license_max_version" msg:"license_max_version"`
-	LicenseeName      string `json:"licensee_name" msg:"licensee_name"`
-	LicenseeEmail     string `json:"licensee_email" msg:"licensee_email"`
+	Iat               int64       `json:"iat" msg:"iat"`
+	Iss               string      `json:"iss" msg:"iss"`
+	Product           string      `json:"product" msg:"product"`
+	LicenseType       LicenseType `json:"lictype" msg:"lictype"`
+	LicenseKeyHash    string      `json:"lickeyh" msg:"lickeyh"`
+	LicenseMaxVersion int         `json:"licmaxv" msg:"licmaxv"`
+	LicenseeName      string      `json:"lisname" msg:"lisname"`
+	LicenseeEmail     string      `json:"lisemail" msg:"lisemail"`
 }
