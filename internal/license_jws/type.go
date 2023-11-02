@@ -8,6 +8,7 @@ import (
 
 type Header struct {
 	Alg string `json:"alg"`
+	Kid string `json:"kid"`
 }
 
 type JWS[D any] struct {

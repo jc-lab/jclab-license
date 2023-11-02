@@ -14,13 +14,6 @@ import (
 var ErrInvalid = errors.New("invalid format")
 
 func Verify[D any](input string) (*JWS[D], error) {
-	var publicKey ed25519.PublicKey = []byte{
-		0xd4, 0x99, 0xef, 0x98, 0x1e, 0xff, 0x90, 0x8a,
-		0xca, 0xbe, 0x2a, 0xd7, 0x14, 0xd7, 0x23, 0xfc,
-		0xba, 0x21, 0x5f, 0x2c, 0x14, 0x32, 0xa1, 0x04,
-		0xd7, 0xcb, 0xe6, 0x7d, 0xa6, 0x09, 0xc8, 0x26,
-	}
-
 	raw := []byte(input)
 
 	n := bytes.Index(raw, dotByte)
@@ -49,7 +42,17 @@ func Verify[D any](input string) (*JWS[D], error) {
 		return nil, ErrInvalid
 	}
 
-	if !ed25519.Verify(publicKey, signedPart, signature) {
+	jws := &JWS[D]{}
+	if err = json.Unmarshal(header, &jws.Header); err != nil {
+		return nil, ErrInvalid
+	}
+
+	jwk, ok := publicKeys[jws.Header.Kid]
+	if !ok {
+		return nil, ErrInvalid
+	}
+
+	if !ed25519.Verify(jwk.key, signedPart, signature) {
 		return nil, ErrInvalid
 	}
 
@@ -62,10 +65,6 @@ func Verify[D any](input string) (*JWS[D], error) {
 		return nil, ErrInvalid
 	}
 
-	jws := &JWS[D]{}
-	if err = json.Unmarshal(header, &jws.Header); err != nil {
-		return nil, ErrInvalid
-	}
 	if err = json.Unmarshal(bodyRaw, &jws.Claims); err != nil {
 		return nil, ErrInvalid
 	}
