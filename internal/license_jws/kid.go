@@ -1,3 +1,5 @@
+// Copyright (C) 2023 JC-Lab. All rights reserved.
+
 package license_jws
 
 import (
