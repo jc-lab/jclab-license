@@ -14,10 +14,10 @@ const (
 type Claims struct {
 	Iat               int64       `json:"iat" msg:"iat"`
 	Iss               string      `json:"iss" msg:"iss"`
-	Product           string      `json:"product" msg:"product"`
+	Products          []string    `json:"prods" msg:"prods"`
 	LicenseType       LicenseType `json:"lictype" msg:"lictype"`
 	LicenseKeyHash    string      `json:"lickeyh" msg:"lickeyh"`
 	LicenseMaxVersion int         `json:"licmaxv" msg:"licmaxv"`
 	LicenseeName      string      `json:"lisname" msg:"lisname"`
-	LicenseeEmail     string      `json:"lisemail" msg:"lisemail"`
+	LicenseeMail      string      `json:"lismail" msg:"lismail"`
 }

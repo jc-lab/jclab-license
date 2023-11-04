@@ -3,6 +3,8 @@
 package jclab_license
 
 import (
+	"crypto"
+	"encoding/base64"
 	"errors"
 	"github.com/jc-lab/jclab-license/internal/license_jws"
 	"github.com/jc-lab/jclab-license/license_model"
@@ -15,8 +17,21 @@ func Verify(product string, version int, input string) (*license_model.Claims, e
 	if err != nil {
 		return nil, err
 	}
-	if jws.Claims.Product != product || ((jws.Claims.LicenseMaxVersion > 0) && jws.Claims.LicenseMaxVersion < version) {
+	var productMatched bool = false
+	for _, s := range jws.Claims.Products {
+		if s == product {
+			productMatched = true
+		}
+	}
+
+	if !productMatched || ((jws.Claims.LicenseMaxVersion > 0) && jws.Claims.LicenseMaxVersion < version) {
 		return nil, ErrLicense
 	}
 	return &jws.Claims, nil
+}
+
+func LicenseKeyHash(licenseKey string) string {
+	hash := crypto.SHA256.New()
+	hash.Write([]byte(licenseKey))
+	return base64.RawURLEncoding.EncodeToString(hash.Sum(nil))
 }

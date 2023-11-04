@@ -36,21 +36,34 @@ func (z *Claims) DecodeMsg(dc *msgp.Reader) (err error) {
 				err = msgp.WrapError(err, "Iss")
 				return
 			}
-		case "product":
-			z.Product, err = dc.ReadString()
+		case "prods":
+			var zb0002 uint32
+			zb0002, err = dc.ReadArrayHeader()
 			if err != nil {
-				err = msgp.WrapError(err, "Product")
+				err = msgp.WrapError(err, "Products")
 				return
+			}
+			if cap(z.Products) >= int(zb0002) {
+				z.Products = (z.Products)[:zb0002]
+			} else {
+				z.Products = make([]string, zb0002)
+			}
+			for za0001 := range z.Products {
+				z.Products[za0001], err = dc.ReadString()
+				if err != nil {
+					err = msgp.WrapError(err, "Products", za0001)
+					return
+				}
 			}
 		case "lictype":
 			{
-				var zb0002 string
-				zb0002, err = dc.ReadString()
+				var zb0003 string
+				zb0003, err = dc.ReadString()
 				if err != nil {
 					err = msgp.WrapError(err, "LicenseType")
 					return
 				}
-				z.LicenseType = LicenseType(zb0002)
+				z.LicenseType = LicenseType(zb0003)
 			}
 		case "lickeyh":
 			z.LicenseKeyHash, err = dc.ReadString()
@@ -70,10 +83,10 @@ func (z *Claims) DecodeMsg(dc *msgp.Reader) (err error) {
 				err = msgp.WrapError(err, "LicenseeName")
 				return
 			}
-		case "lisemail":
-			z.LicenseeEmail, err = dc.ReadString()
+		case "lismail":
+			z.LicenseeMail, err = dc.ReadString()
 			if err != nil {
-				err = msgp.WrapError(err, "LicenseeEmail")
+				err = msgp.WrapError(err, "LicenseeMail")
 				return
 			}
 		default:
@@ -110,15 +123,22 @@ func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
 		err = msgp.WrapError(err, "Iss")
 		return
 	}
-	// write "product"
-	err = en.Append(0xa7, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74)
+	// write "prods"
+	err = en.Append(0xa5, 0x70, 0x72, 0x6f, 0x64, 0x73)
 	if err != nil {
 		return
 	}
-	err = en.WriteString(z.Product)
+	err = en.WriteArrayHeader(uint32(len(z.Products)))
 	if err != nil {
-		err = msgp.WrapError(err, "Product")
+		err = msgp.WrapError(err, "Products")
 		return
+	}
+	for za0001 := range z.Products {
+		err = en.WriteString(z.Products[za0001])
+		if err != nil {
+			err = msgp.WrapError(err, "Products", za0001)
+			return
+		}
 	}
 	// write "lictype"
 	err = en.Append(0xa7, 0x6c, 0x69, 0x63, 0x74, 0x79, 0x70, 0x65)
@@ -160,14 +180,14 @@ func (z *Claims) EncodeMsg(en *msgp.Writer) (err error) {
 		err = msgp.WrapError(err, "LicenseeName")
 		return
 	}
-	// write "lisemail"
-	err = en.Append(0xa8, 0x6c, 0x69, 0x73, 0x65, 0x6d, 0x61, 0x69, 0x6c)
+	// write "lismail"
+	err = en.Append(0xa7, 0x6c, 0x69, 0x73, 0x6d, 0x61, 0x69, 0x6c)
 	if err != nil {
 		return
 	}
-	err = en.WriteString(z.LicenseeEmail)
+	err = en.WriteString(z.LicenseeMail)
 	if err != nil {
-		err = msgp.WrapError(err, "LicenseeEmail")
+		err = msgp.WrapError(err, "LicenseeMail")
 		return
 	}
 	return
@@ -183,9 +203,12 @@ func (z *Claims) MarshalMsg(b []byte) (o []byte, err error) {
 	// string "iss"
 	o = append(o, 0xa3, 0x69, 0x73, 0x73)
 	o = msgp.AppendString(o, z.Iss)
-	// string "product"
-	o = append(o, 0xa7, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74)
-	o = msgp.AppendString(o, z.Product)
+	// string "prods"
+	o = append(o, 0xa5, 0x70, 0x72, 0x6f, 0x64, 0x73)
+	o = msgp.AppendArrayHeader(o, uint32(len(z.Products)))
+	for za0001 := range z.Products {
+		o = msgp.AppendString(o, z.Products[za0001])
+	}
 	// string "lictype"
 	o = append(o, 0xa7, 0x6c, 0x69, 0x63, 0x74, 0x79, 0x70, 0x65)
 	o = msgp.AppendString(o, string(z.LicenseType))
@@ -198,9 +221,9 @@ func (z *Claims) MarshalMsg(b []byte) (o []byte, err error) {
 	// string "lisname"
 	o = append(o, 0xa7, 0x6c, 0x69, 0x73, 0x6e, 0x61, 0x6d, 0x65)
 	o = msgp.AppendString(o, z.LicenseeName)
-	// string "lisemail"
-	o = append(o, 0xa8, 0x6c, 0x69, 0x73, 0x65, 0x6d, 0x61, 0x69, 0x6c)
-	o = msgp.AppendString(o, z.LicenseeEmail)
+	// string "lismail"
+	o = append(o, 0xa7, 0x6c, 0x69, 0x73, 0x6d, 0x61, 0x69, 0x6c)
+	o = msgp.AppendString(o, z.LicenseeMail)
 	return
 }
 
@@ -234,21 +257,34 @@ func (z *Claims) UnmarshalMsg(bts []byte) (o []byte, err error) {
 				err = msgp.WrapError(err, "Iss")
 				return
 			}
-		case "product":
-			z.Product, bts, err = msgp.ReadStringBytes(bts)
+		case "prods":
+			var zb0002 uint32
+			zb0002, bts, err = msgp.ReadArrayHeaderBytes(bts)
 			if err != nil {
-				err = msgp.WrapError(err, "Product")
+				err = msgp.WrapError(err, "Products")
 				return
+			}
+			if cap(z.Products) >= int(zb0002) {
+				z.Products = (z.Products)[:zb0002]
+			} else {
+				z.Products = make([]string, zb0002)
+			}
+			for za0001 := range z.Products {
+				z.Products[za0001], bts, err = msgp.ReadStringBytes(bts)
+				if err != nil {
+					err = msgp.WrapError(err, "Products", za0001)
+					return
+				}
 			}
 		case "lictype":
 			{
-				var zb0002 string
-				zb0002, bts, err = msgp.ReadStringBytes(bts)
+				var zb0003 string
+				zb0003, bts, err = msgp.ReadStringBytes(bts)
 				if err != nil {
 					err = msgp.WrapError(err, "LicenseType")
 					return
 				}
-				z.LicenseType = LicenseType(zb0002)
+				z.LicenseType = LicenseType(zb0003)
 			}
 		case "lickeyh":
 			z.LicenseKeyHash, bts, err = msgp.ReadStringBytes(bts)
@@ -268,10 +304,10 @@ func (z *Claims) UnmarshalMsg(bts []byte) (o []byte, err error) {
 				err = msgp.WrapError(err, "LicenseeName")
 				return
 			}
-		case "lisemail":
-			z.LicenseeEmail, bts, err = msgp.ReadStringBytes(bts)
+		case "lismail":
+			z.LicenseeMail, bts, err = msgp.ReadStringBytes(bts)
 			if err != nil {
-				err = msgp.WrapError(err, "LicenseeEmail")
+				err = msgp.WrapError(err, "LicenseeMail")
 				return
 			}
 		default:
@@ -288,7 +324,11 @@ func (z *Claims) UnmarshalMsg(bts []byte) (o []byte, err error) {
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *Claims) Msgsize() (s int) {
-	s = 1 + 4 + msgp.Int64Size + 4 + msgp.StringPrefixSize + len(z.Iss) + 8 + msgp.StringPrefixSize + len(z.Product) + 8 + msgp.StringPrefixSize + len(string(z.LicenseType)) + 8 + msgp.StringPrefixSize + len(z.LicenseKeyHash) + 8 + msgp.IntSize + 8 + msgp.StringPrefixSize + len(z.LicenseeName) + 9 + msgp.StringPrefixSize + len(z.LicenseeEmail)
+	s = 1 + 4 + msgp.Int64Size + 4 + msgp.StringPrefixSize + len(z.Iss) + 6 + msgp.ArrayHeaderSize
+	for za0001 := range z.Products {
+		s += msgp.StringPrefixSize + len(z.Products[za0001])
+	}
+	s += 8 + msgp.StringPrefixSize + len(string(z.LicenseType)) + 8 + msgp.StringPrefixSize + len(z.LicenseKeyHash) + 8 + msgp.IntSize + 8 + msgp.StringPrefixSize + len(z.LicenseeName) + 8 + msgp.StringPrefixSize + len(z.LicenseeMail)
 	return
 }
 
